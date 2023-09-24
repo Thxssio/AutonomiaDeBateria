@@ -106,7 +106,7 @@ class BancoDadosVoo:
 
     def calcular_tempo_voo(self, bateria, motor):
         if bateria and motor:
-            return ((bateria.capacidade * 0.925) / 1000) * (bateria.taxa_descarga) / motor.capacidade_pico_corrente
+            return ((bateria.capacidade * 0.925) / 1000) * 60 / motor.capacidade_pico_corrente
         else:
             return 0
 
