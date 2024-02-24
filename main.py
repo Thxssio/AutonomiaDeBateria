@@ -2,12 +2,13 @@ import csv
 from datetime import datetime
 
 class Bateria:
-    def __init__(self, modelo, taxa_descarga, tensao, peso_gramas, capacidade):
+    def __init__(self, modelo, taxa_descarga, tensao, peso_gramas, capacidade, resistenciainterna, Wight, Height):
         self.modelo = modelo
         self.taxa_descarga = taxa_descarga
         self.tensao = tensao
         self.peso_gramas = peso_gramas
         self.capacidade = capacidade
+        self.resistenciainterna - resistenciainterna
 
     def __str__(self):
         return f"{self.modelo} ({self.capacidade}mAh, {self.tensao}V)"
@@ -68,7 +69,7 @@ class BancoDadosVoo:
         self.melhor_combinacao = melhor_combinacao
 
         with open(self.nome_arquivo, 'w', newline='') as csvfile:
-            nomes_campos = ['Data e Hora', 'Melhor Tempo de Voo', 'Taxa de Descarga da Bateria', 'Modelo Bateria', 'Tensao', 'Peso (g)', 'Capacidade Bateria', 'Modelo Motor', 'Capacidade em Pico de Corrente do Motor', 'Tempo de Voo Estimado']
+            nomes_campos = ['Data e Hora', 'Melhor Tempo de Voo', 'Taxa de Descarga da Bateria', 'Modelo Bateria', 'Tensao', 'Peso (g)', 'Capacidade Bateria','Resistencia interna', 'Modelo Motor', 'Capacidade em Pico de Corrente do Motor', 'Tempo de Voo Estimado']
             escritor = csv.DictWriter(csvfile, fieldnames=nomes_campos)
             escritor.writeheader()
 
