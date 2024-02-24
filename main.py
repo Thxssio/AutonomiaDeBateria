@@ -158,3 +158,4 @@ if __name__ == "__main__":
               f"Melhor Bateria: {melhor_bateria}\n"
               f"Melhor Motor: {melhor_motor}\n"
               f"Tempo de Voo Estimado da Melhor Combinação: {tempo_voo:.2f} minutos")
+
