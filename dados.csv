@@ -1,0 +1,18 @@
+Modelo da bateria,Tensão da bateria (V),Resistência interna (Ohms),Taxa de descarga (C),Tamanho da bateria (mm),Peso da bateria (g),Capacidade da bateria (mAh),Modelo do motor,Pico de corrente do motor (A),Estimativa de tempo de voo,Recomendação
+GNB,22.2,4.0,120.0,114X38X79,654.0,4500.0,AT4120,75.0,3.6,Bateria Recomendada
+CNHL,22.2,6.0,100.0,162X34X75,798.0,4500.0,AT4120,75.0,3.6,Bateria Recomendada
+OVENIC,22.2,4.0,130.0,75X38X120,666.0,4200.0,AT4120,75.0,3.36,Bateria Recomendada
+TATTU,22.2,4.0,150.0,78X39X126,666.0,4200.0,AT4120,75.0,3.36,Bateria Recomendada
+CNHL,22.2,,40.0,52X44X137,625.0,4000.0,AT4120,75.0,3.2,Bateria Não Recomendada
+GNB,22.2,4.0,120.0,102X38X79,567.0,3900.0,AT4120,75.0,3.12,Bateria Recomendada
+TATTUv3,22.2,4.0,120.0,114X38X75,624.0,3900.0,AT4120,75.0,3.12,Bateria Recomendada
+HRB,22.2,,60.0,135X42X45,467.0,3300.0,AT4120,75.0,2.64,Bateria Não Recomendada
+GNB,22.2,4.0,120.0,76X38X79,436.0,3000.0,AT4120,75.0,2.4,Bateria Recomendada
+GNB,22.2,4.0,120.0,68X38X79,378.0,2600.0,AT4120,75.0,2.08,Bateria Recomendada
+CNHL,22.2,6.0,100.0,102X35X78,460.0,2600.0,AT4120,75.0,2.08,Bateria Recomendada
+GNB,22.2,4.0,120.0,38X38X79,218.0,1500.0,AT4120,75.0,1.2,Bateria Recomendada
+CNHL,22.2,6.0,100.0,54X34X75,266.0,1500.0,AT4120,75.0,1.2,Bateria Recomendada
+OVENIC,22.2,4.0,130.0,75X38X40,222.0,1400.0,AT4120,75.0,1.12,Bateria Recomendada
+TATTU,22.2,4.0,150.0,78X39X42,222.0,1400.0,AT4120,75.0,1.12,Bateria Recomendada
+TATTUv3,22.2,4.0,120.0,38x38x75,208.0,1300.0,at4120,75.0,1.04,Bateria Recomendada
+CNHL,22.2,6.0,100.0,51X35X78,230.0,1300.0,AT4120,75.0,1.04,Bateria Recomendada
