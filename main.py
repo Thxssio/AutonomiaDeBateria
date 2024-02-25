@@ -1,161 +1,110 @@
-import csv
-from datetime import datetime
+import pandas as pd
+import os
 
-class Bateria:
-    def __init__(self, modelo, taxa_descarga, tensao, peso_gramas, capacidade, resistenciainterna, Wight, Height):
-        self.modelo = modelo
-        self.taxa_descarga = taxa_descarga
-        self.tensao = tensao
-        self.peso_gramas = peso_gramas
-        self.capacidade = capacidade
-        self.resistenciainterna - resistenciainterna
-
-    def __str__(self):
-        return f"{self.modelo} ({self.capacidade}mAh, {self.tensao}V)"
-
-    def atualizar(self, capacidade):
-        self.capacidade = capacidade
-
-class Motor:
-    def __init__(self, modelo, capacidade_pico_corrente):
-        self.modelo = modelo
-        self.capacidade_pico_corrente = capacidade_pico_corrente
-
-    def __str__(self):
-        return f"{self.modelo} ({self.capacidade_pico_corrente}A)"
-
-class BancoDadosVoo:
-    def __init__(self):
-        self.baterias = []
-        self.motores = []
-        self.melhor_combinacao = None
-        self.nome_arquivo = 'dados_voo.csv'
-        self.atualizar_banco_dados()
-        
-    def obter_data_hora(self):
-        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    def adicionar_bateria(self, bateria):
-        # Verifica se já existe uma bateria com a mesma tensão
-        for bat in self.baterias:
-            if bat.tensao == bateria.tensao:
-                # Soma as capacidades das baterias com a mesma tensão
-                bat.atualizar(bat.capacidade + bateria.capacidade)
-                return
-        # Se não encontrou uma bateria com a mesma tensão, adiciona a nova bateria
-        self.baterias.append(bateria)
-        self.atualizar_banco_dados()
-
-    def adicionar_motor(self, motor):
-        self.motores.append(motor)
-        self.atualizar_banco_dados()
-
-    def atualizar_banco_dados(self):
-        self.baterias.sort(key=lambda bateria: -bateria.capacidade)
-        self.motores.sort(key=lambda motor: -motor.capacidade_pico_corrente)
-
-        ultima_melhor_combinacao = self.melhor_combinacao
-
-        melhor_combinacao = None
-        melhor_tempo_voo = 0
-
-        for bateria in self.baterias:
-            for motor in self.motores:
-                tempo_voo = self.calcular_tempo_voo(bateria, motor)
-                if tempo_voo > melhor_tempo_voo:
-                    melhor_tempo_voo = tempo_voo
-                    melhor_combinacao = (bateria, motor, tempo_voo)
-
-        self.melhor_combinacao = melhor_combinacao
-
-        with open(self.nome_arquivo, 'w', newline='') as csvfile:
-            nomes_campos = ['Data e Hora', 'Melhor Tempo de Voo', 'Taxa de Descarga da Bateria', 'Modelo Bateria', 'Tensao', 'Peso (g)', 'Capacidade Bateria','Resistencia interna', 'Modelo Motor', 'Capacidade em Pico de Corrente do Motor', 'Tempo de Voo Estimado']
-            escritor = csv.DictWriter(csvfile, fieldnames=nomes_campos)
-            escritor.writeheader()
-
-            if self.melhor_combinacao:
-                melhor_bateria, melhor_motor, tempo_voo = self.melhor_combinacao
-                escritor.writerow({
-                    'Data e Hora': self.obter_data_hora(),
-                    'Melhor Tempo de Voo': tempo_voo,
-                    'Taxa de Descarga da Bateria': melhor_bateria.taxa_descarga,
-                    'Modelo Bateria': melhor_bateria.modelo,
-                    'Tensao': melhor_bateria.tensao,
-                    'Peso (g)': melhor_bateria.peso_gramas,
-                    'Capacidade Bateria': melhor_bateria.capacidade,
-                    'Modelo Motor': melhor_motor.modelo,
-                    'Capacidade em Pico de Corrente do Motor': melhor_motor.capacidade_pico_corrente,
-                    'Tempo de Voo Estimado': tempo_voo
-                })
-
-            for bateria in self.baterias:
-                for motor in self.motores:
-                    tempo_voo = self.calcular_tempo_voo(bateria, motor)
-                    peso_gramas = bateria.peso_gramas + (motor.capacidade_pico_corrente if motor else 0)
-                    escritor.writerow({
-                        'Data e Hora': self.obter_data_hora(),
-                        'Melhor Tempo de Voo': '',
-                        'Taxa de Descarga da Bateria': bateria.taxa_descarga,
-                        'Modelo Bateria': bateria.modelo,
-                        'Tensao': bateria.tensao,
-                        'Peso (g)': peso_gramas,
-                        'Capacidade Bateria': bateria.capacidade,
-                        'Modelo Motor': motor.modelo if motor else None,
-                        'Capacidade em Pico de Corrente do Motor': motor.capacidade_pico_corrente if motor else None,
-                        'Tempo de Voo Estimado': tempo_voo
-                    })
-
-    def calcular_tempo_voo(self, bateria, motor):
-        if bateria and motor:
-            return ((bateria.capacidade * 0.925) / 1000) * 60 / motor.capacidade_pico_corrente
+class BancoDados:
+    def __init__(self, arquivo='dados.csv'):
+        self.arquivo = arquivo
+        if os.path.exists(arquivo):
+            self.carregar_dados()
         else:
-            return 0
+            self.inicializar_dados()
 
-    def obter_melhor_combinacao(self):
-        return self.melhor_combinacao
+    def inicializar_dados(self):
+        self.dados = pd.DataFrame(columns=['Modelo da bateria', 'Tensão da bateria (V)', 'Resistência interna (Ohms)', 'Taxa de descarga (C)', 'Tamanho da bateria (mm)', 'Peso da bateria (g)', 'Capacidade da bateria (mAh)', 'Modelo do motor', 'Pico de corrente do motor (A)', 'Estimativa de tempo de voo', 'Recomendação'])
+        self.dados.to_csv(self.arquivo, index=False)
 
-if __name__ == "__main__":
-    banco_dados_voo = BancoDadosVoo()
+    def carregar_dados(self):
+        self.dados = pd.read_csv(self.arquivo)
+        self.dados['Estimativa de tempo de voo'] = pd.to_numeric(self.dados['Estimativa de tempo de voo'], errors='coerce')
 
-    while True:
-        # Solicita ao usuário que insira os dados da bateria
-        modelo_bateria = input("Digite o modelo da bateria (ou pressione Enter para sair): ")
-        if not modelo_bateria:
-            break
-        taxa_descarga = float(input("Digite a taxa de descarga da bateria: "))
-        tensao_bateria = float(input("Digite a tensão da bateria: "))
-        peso_gramas_bateria = float(input("Digite o peso da bateria em gramas: "))
-        capacidade_bateria = float(input("Digite a capacidade da bateria em mAh: "))
+    def calcular_estimativa_tempo_voo(self, capacidade_bateria, pico_corrente_motor):
+        return ((((capacidade_bateria) / 1000) * 60) / pico_corrente_motor)
 
-        # Cria uma instância de Bateria com os dados inseridos pelo usuário
-        bateria_usuario = Bateria(modelo_bateria, taxa_descarga, tensao_bateria, peso_gramas_bateria, capacidade_bateria)
+    def adicionar_dados(self):
+        if not hasattr(self, 'dados'):
+            self.carregar_dados()
 
-        # Adiciona a bateria ao banco de dados
-        banco_dados_voo.adicionar_bateria(bateria_usuario)
+        while True:
+            modelo_bateria = input("Digite o modelo da bateria (Obrigatorio): ")
+            tensao_bateria = input("Digite a tensão da bateria (V) (Obrigatorio): ")
+            resistencia_interna = input("Digite a resistência interna (Ohms): ")
+            taxa_descarga = input("Digite a taxa de descarga (C) (Obrigatorio): ")
+            tamanho_bateria = input("Digite o tamanho da bateria (mm): ")
+            peso_bateria = input("Digite o peso da bateria (g): ")
+            capacidade_bateria = input("Digite a capacidade da bateria (mAh) (Obrigatorio): ")
+            modelo_motor = input("Digite o modelo do motor (Obrigatorio): ")
+            pico_corrente_motor = input("Digite o pico de corrente do motor (A) (Obrigatorio): ")
 
-        # Verifica se já adicionou uma bateria e avisa o usuário
-        if len(banco_dados_voo.baterias) > 1:
-            print("A segunda bateria foi adicionada. O cálculo de tempo de voo considerará a soma das capacidades.")
+            # Verifica se os dados obrigatórios foram fornecidos
+            if not all([modelo_bateria, tensao_bateria, taxa_descarga, capacidade_bateria, modelo_motor, pico_corrente_motor]):
+                print("Erro: Todos os dados obrigatórios devem ser fornecidos.")
+                continue
 
-        # Solicita ao usuário que insira os dados do motor
-        modelo_motor = input("Digite o modelo do motor: ")
-        capacidade_pico_corrente_motor = float(input("Digite a capacidade em pico de corrente do motor: "))
+            if resistencia_interna.strip() != '':
+                resistencia_interna = float(resistencia_interna)
+            if tamanho_bateria.strip() == '':
+                tamanho_bateria = 'Não Informado'
+            if peso_bateria.strip() == '':
+                peso_bateria = 'Não Informado'
+            else:
+                peso_bateria = float(peso_bateria)
 
-        print("Dados Coletados. \n Digite novos dados: ")
+            # Converte dados numéricos para float
+            tensao_bateria = float(tensao_bateria)
+            taxa_descarga = float(taxa_descarga)
+            capacidade_bateria = float(capacidade_bateria)
+            pico_corrente_motor = float(pico_corrente_motor)
 
-        # Cria uma instância de Motor com os dados inseridos pelo usuário
-        motor_usuario = Motor(modelo_motor, capacidade_pico_corrente_motor)
+            # Calcula a estimativa de tempo de voo usando o método
+            estimativa_tempo_voo = self.calcular_estimativa_tempo_voo(capacidade_bateria, pico_corrente_motor)
 
-        # Adiciona o motor ao banco de dados
-        banco_dados_voo.adicionar_motor(motor_usuario)
+            # Determina a recomendação da bateria
+            recomendacao = 'Bateria Recomendada' if taxa_descarga > pico_corrente_motor else 'Bateria Não Recomendada'
 
-    banco_dados_voo.atualizar_banco_dados()
+            # Verifica se já existe uma entrada com os mesmos dados
+            if not self.dados[
+                (self.dados['Modelo da bateria'] == modelo_bateria) &
+                (self.dados['Tensão da bateria (V)'] == tensao_bateria) &
+                (self.dados['Resistência interna (Ohms)'] == resistencia_interna) &
+                (self.dados['Taxa de descarga (C)'] == taxa_descarga) &
+                (self.dados['Tamanho da bateria (mm)'] == tamanho_bateria) &
+                (self.dados['Peso da bateria (g)'] == peso_bateria) &
+                (self.dados['Capacidade da bateria (mAh)'] == capacidade_bateria) &
+                (self.dados['Modelo do motor'] == modelo_motor) &
+                (self.dados['Pico de corrente do motor (A)'] == pico_corrente_motor) &
+                (self.dados['Estimativa de tempo de voo'] == estimativa_tempo_voo)
+            ].empty:
+                print("Já existe uma entrada com os mesmos dados. Os dados não serão adicionados novamente.")
+            else:
+                # Adiciona os novos dados ao DataFrame
+                novos_dados = {
+                    'Modelo da bateria': [modelo_bateria],
+                    'Tensão da bateria (V)': [tensao_bateria],
+                    'Resistência interna (Ohms)': [resistencia_interna],
+                    'Taxa de descarga (C)': [taxa_descarga],
+                    'Tamanho da bateria (mm)': [tamanho_bateria],
+                    'Peso da bateria (g)': [peso_bateria],
+                    'Capacidade da bateria (mAh)': [capacidade_bateria],  
+                    'Modelo do motor': [modelo_motor],
+                    'Pico de corrente do motor (A)': [pico_corrente_motor],
+                    'Estimativa de tempo de voo': [estimativa_tempo_voo],
+                    'Recomendação': [recomendacao]
+                }
+                self.dados = pd.concat([self.dados, pd.DataFrame(novos_dados)], ignore_index=True)
 
-    melhor_combinacao = banco_dados_voo.obter_melhor_combinacao()
+                # Reorganiza o DataFrame pelo tempo de voo em ordem decrescente
+                self.dados = self.dados.sort_values(by='Estimativa de tempo de voo', ascending=False).reset_index(drop=True)
+                
 
-    if melhor_combinacao:
-        melhor_bateria, melhor_motor, tempo_voo = melhor_combinacao
-        print(f"Melhor Combinacao: \n"
-              f"Melhor Bateria: {melhor_bateria}\n"
-              f"Melhor Motor: {melhor_motor}\n"
-              f"Tempo de Voo Estimado da Melhor Combinação: {tempo_voo:.2f} minutos")
+                # Salva o DataFrame atualizado no arquivo
+                self.dados.to_csv(self.arquivo, index=False)
+
+                print("Dados adicionados com sucesso!")
+
+            continuar = input("Deseja adicionar mais dados? (s/n): ")
+            if continuar.lower() != 's':
+                break
+
+# Utilização da classe
+banco_dados = BancoDados()
+banco_dados.adicionar_dados()
