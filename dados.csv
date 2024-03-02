@@ -1,4 +1,4 @@
-Modelo da bateria,Tensão da bateria (V),Resistência interna (Ohms),Taxa de descarga (C),Tamanho da bateria (mm),Peso da bateria (g),Capacidade da bateria (mAh),Modelo do motor,Pico de corrente do motor (A),Estimativa de tempo de voo,Recomendação
+Modelo da bateria (Qtd),Tensão da bateria (V),Resistência interna (Ohms),Taxa de descarga (C),Tamanho da bateria (mm),Peso da bateria (g),Capacidade da bateria (mAh),Modelo do motor,Pico de corrente do motor (A),Estimativa de tempo de voo,Recomendação
 GNB (3 Bateria),22.2,4.0,120.0,114X38X79,654.0,4500.0,AT4120,75.0,3.6,Bateria Recomendada
 CNHL (3 Bateria),22.2,6.0,100.0,162X34X75,798.0,4500.0,AT4120,75.0,3.6,Bateria Recomendada
 OVENIC (3 Bateria),22.2,4.0,130.0,75X38X120,666.0,4200.0,AT4120,75.0,3.36,Bateria Recomendada
